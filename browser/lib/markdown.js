@@ -58,6 +58,7 @@ class Markdown {
 
     const updatedOptions = Object.assign(defaultOptions, options)
     this.md = markdownit(updatedOptions)
+    this.mathMacro = {}
 
     if (updatedOptions.sanitize !== 'NONE') {
       const allowedTags = ['iframe', 'input', 'b',
@@ -117,19 +118,19 @@ class Markdown {
       inlineClose: config.preview.latexInlineClose,
       blockOpen: config.preview.latexBlockOpen,
       blockClose: config.preview.latexBlockClose,
-      inlineRenderer: function (str) {
+      inlineRenderer: (str) => {
         let output = ''
         try {
-          output = katex.renderToString(str.trim())
+          output = katex.renderToString(str.trim(), { macros : this.mathMacro })
         } catch (err) {
           output = `<span class="katex-error">${err.message}</span>`
         }
         return output
       },
-      blockRenderer: function (str) {
+      blockRenderer: (str) => {
         let output = ''
         try {
-          output = katex.renderToString(str.trim(), { displayMode: true })
+          output = katex.renderToString(str.trim(), { displayMode: true, macros : this.mathMacro })
         } catch (err) {
           output = `<div class="katex-error">${err.message}</div>`
         }
