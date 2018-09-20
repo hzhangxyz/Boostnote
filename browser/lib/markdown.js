@@ -121,7 +121,7 @@ class Markdown {
       inlineRenderer: (str) => {
         let output = ''
         try {
-          output = katex.renderToString(str.trim(), { macros : this.mathMacro })
+          output = katex.renderToString(str.trim(), { macros: this.mathMacro })
         } catch (err) {
           output = `<span class="katex-error">${err.message}</span>`
         }
@@ -130,7 +130,7 @@ class Markdown {
       blockRenderer: (str) => {
         let output = ''
         try {
-          output = katex.renderToString(str.trim(), { displayMode: true, macros : this.mathMacro })
+          output = katex.renderToString(str.trim(), { displayMode: true, macros: this.mathMacro })
         } catch (err) {
           output = `<div class="katex-error">${err.message}</div>`
         }
