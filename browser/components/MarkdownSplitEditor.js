@@ -26,24 +26,26 @@ class MarkdownSplitEditor extends React.Component {
   }
 
   handleScroll (e) {
-    const previewDoc = _.get(this, 'refs.preview.refs.root.contentWindow.document')
+    const previewDoc = _.get(this, 'refs.preview.refs.root.contentWindow.document.body')
     const codeDoc = _.get(this, 'refs.code.editor.doc')
     let srcTop, srcHeight, targetTop, targetHeight
 
     if (this.userScroll) {
       if (e.doc) {
-        srcTop = _.get(e, 'doc.scrollTop')
-        srcHeight = _.get(e, 'doc.height')
-        targetTop = _.get(previewDoc, 'body.scrollTop')
-        targetHeight = _.get(previewDoc, 'body.scrollHeight')
+        srcTop = _.get(codeDoc, 'scrollTop')
+        srcHeight = _.get(codeDoc, 'height')
+        targetTop = _.get(previewDoc, 'scrollTop')
+        targetHeight = _.get(previewDoc, 'scrollHeight')
       } else {
-        srcTop = _.get(previewDoc, 'body.scrollTop')
-        srcHeight = _.get(previewDoc, 'body.scrollHeight')
+        srcTop = _.get(previewDoc, 'scrollTop')
+        srcHeight = _.get(previewDoc, 'scrollHeight')
         targetTop = _.get(codeDoc, 'scrollTop')
         targetHeight = _.get(codeDoc, 'height')
       }
 
-      const distance = (targetHeight * srcTop / srcHeight) - targetTop
+      const clientHeight = _.get(previewDoc, 'clientHeight')
+      const distance = ((targetHeight - clientHeight) * srcTop /
+                          (srcHeight - clientHeight)) - targetTop
       const framerate = 1000 / 60
       const frames = 20
       const refractory = frames * framerate
@@ -57,7 +59,7 @@ class MarkdownSplitEditor extends React.Component {
         scrollPos = time < 0.5
                   ? 2 * time * time // ease in
                   : -1 + (4 - 2 * time) * time // ease out
-        if (e.doc) _.set(previewDoc, 'body.scrollTop', targetTop + scrollPos * distance)
+        if (e.doc) _.set(previewDoc, 'scrollTop', targetTop + scrollPos * distance)
         else _.get(this, 'refs.code.editor').scrollTo(0, targetTop + scrollPos * distance)
         if (frame >= frames) {
           clearInterval(timer)
